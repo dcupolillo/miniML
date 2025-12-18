@@ -10,7 +10,7 @@ from pathlib import Path
 from scipy import signal
 from scipy.optimize import curve_fit
 from scipy.ndimage import maximum_filter1d
-from miniML_functions import (get_event_peak, get_event_baseline, get_event_onset, get_event_risetime, 
+from .miniML_functions import (get_event_peak, get_event_baseline, get_event_onset, get_event_risetime, 
                               get_event_halfdecay_time, get_event_charge, get_event_halfwidth)
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -289,7 +289,14 @@ class MiniTrace():
 
 
     @classmethod
-    def from_axon_file(cls, filename: str, channel: int=0, scaling: float=1.0, unit: str=None) -> MiniTrace:
+    def from_axon_file(
+        cls,
+        filename: str,
+        channel: int=0,
+        sweep: int = None,
+        scaling: float=1.0,
+        unit: str=None
+    ) -> MiniTrace:
         ''' Loads data from an AXON .abf file.
 
         Parameters
@@ -324,6 +331,11 @@ class MiniTrace():
             raise IndexError('Selected channel does not exist.')
 
         data_unit = unit if unit is not None else abf_file.adcUnits[channel]
+
+        if sweep is not None:
+            abf_file.setSweep(sweep, channel=channel)
+            return cls(data=abf_file.sweepY * scaling, sampling_interval=1/abf_file.sampleRate, 
+                        y_unit=data_unit, filename=Path(filename).name)
 
         return cls(data=abf_file.data[channel] * scaling, sampling_interval=1/abf_file.sampleRate, 
                     y_unit=data_unit, filename=Path(filename).name)
