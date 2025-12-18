@@ -1,11 +1,12 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='miniML',
     version='0.1.0',
+    author='delvendahl',
+    homepage='https://delvendahl.github.io/miniML/intro.html',
     description='Mini machine learning package for electrophysiology',
-    packages=['', 'core', 'core.FileImport'],
-    package_dir={'': '.'},
+    packages=find_packages(),
     install_requires=[
         'scikit-learn==1.6.1',
         'matplotlib==3.8.2',
